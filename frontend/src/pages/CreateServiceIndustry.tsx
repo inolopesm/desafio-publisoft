@@ -60,7 +60,7 @@ export default function CreateServiceIndustry() {
           <option>Pessoa Jurídica</option>
         </select>
         <label>CPF/CNPJ</label>
-        <input type="text" name="register" value={formData.register} onChange={handleChange} minLength={14} maxLength={18} required />
+        <input type="text" name="register" value={formData.register} onChange={handleChange} minLength={11} maxLength={14} required />
         <label>Nome/Razão Social</label>
         <input type="text" name="name" value={formData.name} onChange={handleChange} maxLength={50} required />
         <label>E-mail</label>
@@ -70,17 +70,17 @@ export default function CreateServiceIndustry() {
           <label>CEP</label>
           <input type="text" name="zipCode" value={formData.zipCode} onChange={handleChange} minLength={8} maxLength={8} required />
           <label>Logradouro</label>
-          <input type="text" name="street" value={formData.street} onChange={handleChange} maxLength={255} />
+          <input type="text" name="street" value={formData.street} onChange={handleChange} maxLength={255} required />
           <label>Número</label>
-          <input type="number" name="number" value={formData.number} onChange={handleChange} min={0} max={65535} />
+          <input type="text" name="number" value={formData.number} onChange={handleChange} maxLength={5} required />
           <label>Complemento</label>
-          <input type="text" name="complement" value={formData.complement} onChange={handleChange} />
+          <input type="text" name="complement" value={formData.complement} onChange={handleChange} maxLength={255} required />
           <label>Bairro</label>
-          <input type="text" name="neighborhood" value={formData.neighborhood} onChange={handleChange} />
+          <input type="text" name="neighborhood" value={formData.neighborhood} onChange={handleChange} maxLength={255} required />
           <label>Cidade</label>
-          <input type="text" name="city" value={formData.city} onChange={handleChange} />
+          <input type="text" name="city" value={formData.city} onChange={handleChange} maxLength={255} required />
           <label>UF</label>
-          <select name="state" value={formData.state} onChange={handleChange}>
+          <select name="state" value={formData.state} onChange={handleChange} required>
             <option> </option>
             <option>AC</option>
             <option>AL</option>
