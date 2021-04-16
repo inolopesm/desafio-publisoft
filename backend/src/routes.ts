@@ -3,6 +3,6 @@ import { storeServiceIndustry } from './controllers/storeServiceIndustry'
 
 const routes = Router()
 
-routes.post('/serviceIndustry', storeServiceIndustry)
+routes.post('/serviceIndustries', storeServiceIndustry)
 
 export default routes
