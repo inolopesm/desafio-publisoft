@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "tsnd src/"
+    "dev": "tsnd src/",
+    "knex": "knex --knexfile knexfile.js"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
     "env-var": "^7.0.0",
     "express": "^4.17.1",
-    "knex": "^0.95.4"
+    "knex": "^0.95.4",
+    "pg": "^8.6.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.11",
