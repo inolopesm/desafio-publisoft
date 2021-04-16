@@ -1,0 +1,16 @@
+* {
+    box-sizing: border-box;
+}
+
+label {
+    display: block;
+}
+
+input, select {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+fieldset {
+    margin-bottom: 1rem;
+}

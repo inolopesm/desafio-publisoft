@@ -1,8 +1,10 @@
 import React from 'react'
+import './styles/global.css'
+import CreateServiceIndustry from './pages/CreateServiceIndustry'
 
 function App() {
   return (
-    <h1>Hello World</h1>
+    <CreateServiceIndustry />
   )
 }
 
