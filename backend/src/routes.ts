@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import { listServiceIndustry } from './controllers/listServiceIndustry'
-import { storeServiceIndustry } from './controllers/storeServiceIndustry'
+import { listServiceIndustryController } from './controllers/listServiceIndustryController'
+import { storeServiceIndustryController } from './controllers/storeServiceIndustryController'
 
 const routes = Router()
 
-routes.post('/serviceIndustries', storeServiceIndustry)
-routes.get('/serviceIndustries', listServiceIndustry)
+routes.post('/serviceIndustries', storeServiceIndustryController)
+routes.get('/serviceIndustries', listServiceIndustryController)
 
 export default routes
