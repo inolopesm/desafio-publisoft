@@ -14,3 +14,8 @@ input, select {
 fieldset {
     margin-bottom: 1rem;
 }
+
+.like-input {
+    height: 1rem;
+    margin-bottom: 1rem;
+}
