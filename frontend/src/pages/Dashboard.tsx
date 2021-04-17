@@ -93,17 +93,30 @@ export default function Dashboard() {
             <th>Prestador de Serviço</th>
             <th>Data de Início</th>
             <th>Data de Fim</th>
+            <th>Dias Restantes</th>
           </tr>
         </thead>
         <tbody>
-          {contracts.map((contract, i) => (
-            <tr key={`contract-${i}-${contract.id}`}>
-              <td>{contract.id}</td>
-              <td title={contract.serviceIndustry.register}>{contract.serviceIndustry.name}</td>
-              <td>{contract.startDate.replace(/T.*/, '')}</td>
-              <td>{contract.endDate.replace(/T.*/, '')}</td>
-            </tr>
-          ))}
+          {contracts.map((contract, i) => {
+            const today = new Date()
+            const endDate = new Date(contract.endDate)
+
+            let daysLeft = 0
+
+            if (today.getTime() < endDate.getTime()) {
+              daysLeft = differenceInDays(today, endDate)
+            }
+
+            return (
+              <tr key={`contract-${i}-${contract.id}`}>
+                <td>{contract.id}</td>
+                <td title={contract.serviceIndustry.register}>{contract.serviceIndustry.name}</td>
+                <td>{contract.startDate.replace(/T.*/, '')}</td>
+                <td>{contract.endDate.replace(/T.*/, '')}</td>
+                <td>{daysLeft} dias</td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </>
