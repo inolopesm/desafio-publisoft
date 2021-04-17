@@ -14,6 +14,7 @@ export const up = async (knex: Knex) => {
     table.string('neighborhood', 255).notNullable()
     table.string('city', 255).notNullable()
     table.string('state', 2).notNullable()
+    table.dateTime('deletedAt')
   })
 }
 
