@@ -13,8 +13,8 @@ export const listContractsController: RequestHandler = async (_req, res) => {
   const contractDTOs = rows.map(row => {
     return {
       id: row.id,
-      startDate: row.startDate,
-      endDate: row.endDate,
+      startDate: row.startDate.toISOString().replace(/T.*/, ''),
+      endDate: row.endDate.toISOString().replace(/T.*/, ''),
       serviceIndustry: {
         id: row.serviceIndustryId,
         name: row.name,
