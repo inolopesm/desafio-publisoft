@@ -54,7 +54,7 @@ export default function CreateContract() {
 
   return (
     <>
-      <h1>Cadastro de Contrato</h1>
+      <h2>Cadastro de Contrato</h2>
       <form onSubmit={handleSubmit}>
         <label>Prestador de Serviço</label>
         {

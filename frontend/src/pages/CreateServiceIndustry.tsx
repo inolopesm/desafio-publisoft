@@ -51,7 +51,7 @@ export default function CreateServiceIndustry() {
 
   return (
     <>
-      <h1>Cadastro de Prestador</h1>
+      <h2>Cadastro de Prestador</h2>
       <form onSubmit={handleSubmit}>
         <label>Tipo</label>
         <select name="type" value={formData.type} onChange={handleChange} required>
