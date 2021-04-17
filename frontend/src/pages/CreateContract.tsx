@@ -27,7 +27,14 @@ export default function CreateContract() {
 
   function handleChange(changeEvent: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = changeEvent.target
-    setFormData({ ...formData, [name]: value })
+    let changedValue = value
+
+    if (['startDate', 'endDate'].includes(name)) {
+      changedValue = changedValue.replace(/[^\d-]/g, '')
+    }
+
+
+    setFormData({ ...formData, [name]: changedValue })
   }
 
   async function handleSubmit(formEvent: React.FormEvent<HTMLFormElement>) {
@@ -71,11 +78,13 @@ export default function CreateContract() {
         <div>
           <label>Data de Início</label>
           <input type="text" name="startDate" value={formData.startDate} onChange={handleChange} minLength={10} maxLength={10} required />
+          <small>Exemplo de formato aceito: 2020-12-23 (ANO - MÊS COM ZERO - DIA COM ZERO)</small>
         </div>
 
         <div>
           <label>Data de Fim</label>
           <input type="text" name="endDate" value={formData.endDate} onChange={handleChange} minLength={10} maxLength={10} required />
+          <small>Exemplo de formato aceito: 2020-12-23 (ANO - MÊS COM ZERO - DIA COM ZERO)</small>
         </div>
 
         <button type="submit">Submeter</button>
