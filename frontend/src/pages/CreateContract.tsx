@@ -56,28 +56,27 @@ export default function CreateContract() {
     <>
       <h2>Cadastro de Contrato</h2>
       <form onSubmit={handleSubmit}>
-        <label>Prestador de Serviço</label>
-        {
-          serviceIndustries.length !== 0
-          ? (
-            <select name="serviceIndustryId" value={formData.serviceIndustryId} onChange={handleChange} required>
-              <option> </option>
-              {serviceIndustries.map((serviceIndustry, i) => (
-                <option key={`${i}${serviceIndustry.id}`} value={serviceIndustry.id}>
-                  {serviceIndustry.register}: {serviceIndustry.name}
-                </option>
-              ))}
-            </select>
-          )
-          : (
-            <select disabled></select>
-          )
-        }
-        <label>Data de Início</label>
-        <input type="text" name="startDate" value={formData.startDate} onChange={handleChange} minLength={10} maxLength={10} required />
+        <div>
+          <label>Prestador de Serviço</label>
+          <select name="serviceIndustryId" value={formData.serviceIndustryId} onChange={handleChange} required>
+            <option> </option>
+            {serviceIndustries.map((serviceIndustry, i) => (
+              <option key={`${i}${serviceIndustry.id}`} value={serviceIndustry.id}>
+                {serviceIndustry.register}: {serviceIndustry.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <label>Data de Fim</label>
-        <input type="text" name="endDate" value={formData.endDate} onChange={handleChange} minLength={10} maxLength={10} required />
+        <div>
+          <label>Data de Início</label>
+          <input type="text" name="startDate" value={formData.startDate} onChange={handleChange} minLength={10} maxLength={10} required />
+        </div>
+
+        <div>
+          <label>Data de Fim</label>
+          <input type="text" name="endDate" value={formData.endDate} onChange={handleChange} minLength={10} maxLength={10} required />
+        </div>
 
         <button type="submit">Submeter</button>
       </form>

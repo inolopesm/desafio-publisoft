@@ -13,10 +13,9 @@ label {
 
 input, select {
     width: 100%;
-    margin-bottom: 1rem;
 }
 
-fieldset {
+form > div, fieldset > div:not(:last-child), fieldset {
     margin-bottom: 1rem;
 }
 
