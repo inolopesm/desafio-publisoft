@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { differenceInDays } from 'date-fns'
+import { Typography, Card, Row, Col, Table } from 'antd'
 
 interface Contract {
   id: number
@@ -12,6 +13,14 @@ interface Contract {
   }
 }
 
+interface ContractDTO {
+  key: number
+  startDate: string
+  endDate: string
+  serviceIndustry: string
+  daysLeft: number
+}
+
 interface ExpiresIn {
   expired: number
   today: number
@@ -21,13 +30,13 @@ interface ExpiresIn {
 }
 
 export default function Dashboard() {
-  const [contracts, setContracts] = useState<Contract[]>([])
+  const [contracts, setContracts] = useState<ContractDTO[]>([])
   const [expiresIn, setExpiresIn] = useState<ExpiresIn>()
 
   useEffect(() => {
     fetch(process.env.REACT_APP_API_BASE_URL + '/contracts')
-      .then(response => response.json().then((contracts: Contract[]) => {
-        setContracts(contracts)
+      .then(response => response.json().then((contractsAPI: Contract[]) => {
+
         const today = new Date()
 
         const expiresIn: ExpiresIn = {
@@ -38,7 +47,9 @@ export default function Dashboard() {
           thirtyDays: 0
         }
 
-        for (const contract of contracts) {
+        const contracts: ContractDTO[] = []
+
+        for (const contract of contractsAPI) {
           const endDate = new Date(contract.endDate)
 
           if (endDate.getTime() > today.getTime()) {
@@ -56,69 +67,77 @@ export default function Dashboard() {
               expiresIn.thirtyDays++
             }
           }
+
+          let daysLeft = 0
+
+          if (today.getTime() < endDate.getTime()) {
+            daysLeft = differenceInDays(endDate, today)
+          }
+
+          contracts.push({
+            key: contract.id,
+            startDate: contract.startDate,
+            endDate: contract.endDate,
+            serviceIndustry: contract.serviceIndustry.name,
+            daysLeft
+          })
         }
 
         setExpiresIn(expiresIn)
+        setContracts(contracts)
       }))
   }, [])
 
   return (
-    <>
-      <h2>Painel Visual</h2>
-      <h3>Contratos</h3>
-      <ul>
-        <li>
-          <strong>Vencidos:</strong> {expiresIn?.expired}
-        </li>
-        <li>
-          <strong>Vencem hoje:</strong> {expiresIn?.today}
-        </li>
-        <li>
-          <strong>Vencem em 7 dias:</strong> {expiresIn?.sevenDays}
-        </li>
-        <li>
-          <strong>Vencem em 15 dias:</strong> {expiresIn?.fifteenDays}
-        </li>
-        <li>
-          <strong>Vencem em 30 dias:</strong> {expiresIn?.thirtyDays}
-        </li>
-      </ul>
-      <p>
-        <em>Dica: passe o mouse por cima do nome do prestador de serviço para visualizar seu CPF/CNPJ.</em>
-        </p>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Prestador de Serviço</th>
-            <th>Data de Início</th>
-            <th>Data de Fim</th>
-            <th>Dias Restantes</th>
-          </tr>
-        </thead>
-        <tbody>
-          {contracts.map((contract, i) => {
-            const today = new Date()
-            const endDate = new Date(contract.endDate)
+    <div style={{ padding: 16 }}>
+      <Typography.Title level={2}>Painel Visual</Typography.Title>
 
-            let daysLeft = 0
+      <Typography.Title level={3}>Contratos</Typography.Title>
 
-            if (today.getTime() < endDate.getTime()) {
-              daysLeft = differenceInDays(today, endDate)
-            }
+      <Row gutter={16} justify="space-between">
+        <Col>
+          <Card size="small" style={{ minWidth: 160 }}>
+            <Typography.Title>{expiresIn?.expired}</Typography.Title>
+            <Typography.Title level={5}>Vencidos</Typography.Title>
+          </Card>
+        </Col>
+        <Col>
+          <Card size="small" style={{ minWidth: 160 }}>
+            <Typography.Title>{expiresIn?.today}</Typography.Title>
+            <Typography.Title level={5}>Vencem Hoje</Typography.Title>
+          </Card>
+        </Col>
+        <Col>
+          <Card size="small" style={{ minWidth: 160 }}>
+            <Typography.Title>{expiresIn?.sevenDays}</Typography.Title>
+            <Typography.Title level={5}>Vencem em 7 Dias</Typography.Title>
+          </Card>
+        </Col>
+        <Col>
+          <Card size="small" style={{ minWidth: 160 }}>
+            <Typography.Title>{expiresIn?.fifteenDays}</Typography.Title>
+            <Typography.Title level={5}>Vencem em 15 Dias</Typography.Title>
+          </Card>
+        </Col>
+        <Col>
+          <Card size="small" style={{ minWidth: 160 }}>
+            <Typography.Title>{expiresIn?.thirtyDays}</Typography.Title>
+            <Typography.Title level={5}>Vencem em 30 Dias</Typography.Title>
+          </Card>
+        </Col>
+      </Row>
 
-            return (
-              <tr key={`contract-${i}-${contract.id}`}>
-                <td>{contract.id}</td>
-                <td title={contract.serviceIndustry.register}>{contract.serviceIndustry.name}</td>
-                <td>{contract.startDate.replace(/T.*/, '')}</td>
-                <td>{contract.endDate.replace(/T.*/, '')}</td>
-                <td>{daysLeft} dias</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    </>
+      <div style={{ padding: 16 }} />
+
+      <Card size="small">
+        <Table dataSource={contracts}>
+          <Table.Column title="#" dataIndex="key" />
+          <Table.Column title="Prestador de Serviço" dataIndex="serviceIndustry" />
+          <Table.Column title="Data de Início" dataIndex="startDate" render={(value) => { console.log(typeof value, value); return value; }} />
+          <Table.Column title="Data de Fim" dataIndex="endDate" />
+          <Table.Column title="Dias Restantes" dataIndex="daysLeft" />
+        </Table>
+      </Card>
+    </div>
   )
 }
