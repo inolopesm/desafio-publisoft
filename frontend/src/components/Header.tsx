@@ -6,6 +6,8 @@ export default function Header() {
     <header>
       <h1>Publicsoft</h1>
       <nav>
+        <NavLink to="/dashboard">Painel Visual</NavLink>
+        &nbsp;|&nbsp;
         <NavLink to="/serviceIndustries/create">Criar Prestador de Serviço</NavLink>
         &nbsp;|&nbsp;
         <NavLink to="/contracts/create">Criar Contrato</NavLink>
