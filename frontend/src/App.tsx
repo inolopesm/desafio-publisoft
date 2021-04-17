@@ -9,7 +9,7 @@ import Dashboard from './pages/Dashboard'
 
 function App() {
   return (
-    <Layout>
+    <Layout style={{ minHeight: '100vh' }}>
       <Router>
         <Header />
         <Layout.Content>
