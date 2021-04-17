@@ -19,3 +19,7 @@ fieldset {
     height: 1rem;
     margin-bottom: 1rem;
 }
+
+nav > a.active {
+    font-weight: bold;
+}
