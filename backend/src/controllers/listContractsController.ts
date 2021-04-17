@@ -8,6 +8,6 @@ export const listContractsController: RequestHandler = async (_req, res) => {
       'serviceIndustry.name', 'serviceIndustry.register'
     ])
     .innerJoin('serviceIndustry', 'contract.serviceIndustryId', 'serviceIndustry.id')
-    .whereNotNull('contract.deletedAt')
+    .whereNull('contract.deletedAt')
   return res.json(contractDTOs)
 }

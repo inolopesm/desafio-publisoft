@@ -4,6 +4,6 @@ import knex from '../database/knex'
 export const listServiceIndustryController: RequestHandler = async (_req, res) => {
   const serviceIndustries = await knex.client('serviceIndustry')
     .select(['id', 'register', 'name'])
-    .whereNotNull('deletedAt')
+    .whereNull('deletedAt')
   return res.json(serviceIndustries)
 }
