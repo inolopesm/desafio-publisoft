@@ -23,3 +23,14 @@ fieldset {
 nav > a.active {
     font-weight: bold;
 }
+
+body {
+    background-color: #ECECEC;
+}
+
+#root {
+    max-width: 960px;
+    background-color: #FFFFFF;
+    margin-left: auto;
+    margin-right: auto;
+}
