@@ -1,160 +1,95 @@
-import React, { useState } from 'react'
-
-interface FormData {
-  type: string
-  register: string
-  name: string
-  email: string
-  zipCode: string
-  street: string
-  number: string
-  complement: string
-  neighborhood: string
-  city: string
-  state: string
-}
-
-const initialFormDataState: FormData = {
-  type: '', register: '', name: '', email: '', zipCode: '', street: '',
-  number: '', complement: '', neighborhood: '', city: '', state: ''
-}
+import { Form, Input, Select, Card, Typography, Button, notification } from 'antd'
+import Validator from '../utils/Validator'
 
 export default function CreateServiceIndustry() {
-  const [formData, setFormData] = useState<FormData>(initialFormDataState)
+  const [form] = Form.useForm()
 
-  function handleChange(changeEvent: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-    const { name, value } = changeEvent.target
-    let changedValue = value
-
-    if (['register', 'cep', 'number'].includes(name)) {
-      changedValue = changedValue.replace(/\D/, '')
-    }
-
-    setFormData({ ...formData, [name]: changedValue })
-  }
-
-  async function handleSubmit(formEvent: React.FormEvent<HTMLFormElement>) {
-    formEvent.preventDefault()
-
+  const handleFinish = async (values: Record<string, string>) => {
     const url = process.env.REACT_APP_API_BASE_URL + '/serviceIndustries'
 
-    const response = await fetch(url, {
+    await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
+      body: JSON.stringify(values)
     })
 
-    if (response.status === 201) {
-      setFormData(initialFormDataState)
-      window.alert('Prestador cadastrado com sucesso')
-    }
+    form.resetFields()
 
-    if (response.status === 400) {
-      const data = await response.json()
-      window.alert(data.message)
-    }
+    notification.open({
+      message: 'Uhul!',
+      description: 'Prestador cadastrado com sucesso'
+    })
+  }
+
+  const handleFinishFailed = () => {
+    notification.open({
+      message: 'Ops!',
+      description: 'Parece que tem alguns campos necessitando da sua atenção'
+    })
   }
 
   return (
     <>
-      <h2>Cadastro de Prestador</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Tipo</label>
-          <select name="type" value={formData.type} onChange={handleChange} required>
-            <option> </option>
-            <option>Pessoa Física</option>
-            <option>Pessoa Jurídica</option>
-          </select>
-        </div>
+      <Typography.Title level={2}>Cadastro de Prestador</Typography.Title>
+      <Card>
+        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} form={form} onFinish={handleFinish} onFinishFailed={handleFinishFailed}>
+          <Form.Item label="Tipo" name="type" rules={[{ validator: new Validator().isRequired().build }]}>
+            <Select placeholder="Física ou Jurídica?">
+              <Select.Option value="Pessoa Física">Pessoa Física</Select.Option>
+              <Select.Option value="Pessoa Jurídica">Pessoa Jurídica</Select.Option>
+            </Select>
+          </Form.Item>
 
-        <div>
-          <label>CPF/CNPJ</label>
-          <input type="text" name="register" value={formData.register} onChange={handleChange} minLength={11} maxLength={14} required />
-          <small>Apenas números</small>
-        </div>
+          <Form.Item label="CPF/CNPJ" name="register" rules={[{ validator: new Validator().isRequired().onlyNumbers().onlyLengths([11, 14]).build }]}>
+            <Input placeholder="12312312312 (apenas números)" />
+          </Form.Item>
 
-        <div>
-          <label>Nome/Razão Social</label>
-          <input type="text" name="name" value={formData.name} onChange={handleChange} maxLength={50} required />
-        </div>
+          <Form.Item label="Nome/Razão Social" name="name" rules={[{ validator: new Validator().isRequired().maxLength(50).build }]}>
+            <Input placeholder="José Arlindo Santos ou JAS Eireli" />
+          </Form.Item>
 
-        <div>
-          <label>E-mail</label>
-          <input type="email" name="email" value={formData.email} onChange={handleChange} maxLength={100} required />
-        </div>
+          <Form.Item label="E-mail" name="email" rules={[{ validator: new Validator().isRequired().isEmail().maxLength(100).build }]}>
+            <Input placeholder="josearlindo@jaseireli.com" />
+          </Form.Item>
 
-        <fieldset>
-          <legend>Endereço</legend>
-          <div>
-          <label>CEP</label>
-            <input type="text" name="zipCode" value={formData.zipCode} onChange={handleChange} minLength={8} maxLength={8} required />
-            <small>Apenas números</small>
-          </div>
+          <Form.Item label="CEP" name="zipCode" rules={[{ validator: new Validator().isRequired().onlyLength(8).build }]}>
+            <Input placeholder="01001000 (apenas números)" />
+          </Form.Item>
 
-          <div>
-            <label>UF</label>
-            <select name="state" value={formData.state} onChange={handleChange} required>
-              <option> </option>
-              <option>AC</option>
-              <option>AL</option>
-              <option>AP</option>
-              <option>AM</option>
-              <option>BA</option>
-              <option>CE</option>
-              <option>DF</option>
-              <option>ES</option>
-              <option>GO</option>
-              <option>MA</option>
-              <option>MT</option>
-              <option>MS</option>
-              <option>MG</option>
-              <option>PA</option>
-              <option>PB</option>
-              <option>PR</option>
-              <option>PE</option>
-              <option>PI</option>
-              <option>RJ</option>
-              <option>RN</option>
-              <option>RS</option>
-              <option>RO</option>
-              <option>RR</option>
-              <option>SC</option>
-              <option>SP</option>
-              <option>SE</option>
-              <option>TO</option>
-            </select>
-          </div>
+          <Form.Item label="UF" name="state" rules={[{ validator: new Validator().isRequired().build }]}>
+            <Select placeholder="PB? PE? SP?">
+              {
+                ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
+                .map((state, i) => <Select.Option key={`state-${i}`} value={state}>{state}</Select.Option>)
+              }
+            </Select>
+          </Form.Item>
 
-          <div>
-            <label>Cidade</label>
-            <input type="text" name="city" value={formData.city} onChange={handleChange} maxLength={255} required />
-          </div>
+          <Form.Item label="Cidade" name="city" rules={[{ validator: new Validator().isRequired().maxLength(255).build }]}>
+            <Input placeholder="João Pessoa? Recife? São Paulo?" />
+          </Form.Item>
 
-          <div>
-            <label>Bairro</label>
-            <input type="text" name="neighborhood" value={formData.neighborhood} onChange={handleChange} maxLength={255} required />
-          </div>
+          <Form.Item label="Bairro" name="neighborhood" rules={[{ validator: new Validator().isRequired().maxLength(255).build }]}>
+            <Input placeholder="Torre? Afogados? Vila Maladalena?" />
+          </Form.Item>
 
-          <div>
-            <label>Logradouro</label>
-            <input type="text" name="street" value={formData.street} onChange={handleChange} maxLength={255} required />
-          </div>
+          <Form.Item label="Logradouro" name="street" rules={[{ validator: new Validator().isRequired().maxLength(255).build }]}>
+            <Input placeholder="Rua A? Avenida B? Estrada C?" />
+          </Form.Item>
 
-          <div>
-            <label>Número</label>
-            <input type="text" name="number" value={formData.number} onChange={handleChange} maxLength={5} required />
-            <small>Apenas números. Se não houver, informe o número 0 (zero)</small>
-          </div>
+          <Form.Item label="Número" name="number" rules={[{ validator: new Validator().isRequired().onlyNumbers().maxLength(5).build }]}>
+            <Input placeholder="Se não houver, deixa o número 0 (zero)" />
+          </Form.Item>
 
-          <div>
-            <label>Complemento</label>
-            <input type="text" name="complement" value={formData.complement} onChange={handleChange} maxLength={255} required />
-            <small>Se não houver, informe algo como "Não há"</small>
-          </div>
-        </fieldset>
-        <button type="submit">Submeter</button>
-      </form>
+          <Form.Item label="Complemento" name="complement" rules={[{ validator: new Validator().isRequired().maxLength(255).build }]}>
+            <Input placeholder="Se não houver, e for casa, coloca &quot;casa&quot;, ou algo como &quot;não há&quot;" />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 4, span: 20 }}>
+            <Button type="primary" htmlType="submit">Submeter</Button>
+          </Form.Item>
+        </Form>
+      </Card>
     </>
   )
 }
