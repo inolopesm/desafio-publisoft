@@ -1,14 +1,6 @@
-import React, { useEffect, useState } from 'react'
-
-interface FormData {
-  serviceIndustryId: string
-  startDate: string
-  endDate: string
-}
-
-const initialFormDataState: FormData = {
-  serviceIndustryId: '', startDate: '', endDate: ''
-}
+import { Button, Card, DatePicker, Form, notification, Select, Typography } from 'antd'
+import { useEffect, useState } from 'react'
+import Validator from '../utils/Validator'
 
 interface ServiceIndustry {
   id: number
@@ -17,7 +9,7 @@ interface ServiceIndustry {
 }
 
 export default function CreateContract() {
-  const [formData, setFormData] = useState<FormData>(initialFormDataState)
+  const [form] = Form.useForm()
   const [serviceIndustries, setServiceIndustries] = useState<ServiceIndustry[]>([])
 
   useEffect(() => {
@@ -25,70 +17,67 @@ export default function CreateContract() {
       .then(response => response.json().then(setServiceIndustries))
   }, [])
 
-  function handleChange(changeEvent: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-    const { name, value } = changeEvent.target
-    let changedValue = value
+  const handleFinish = async (values: Record<string, string>) => {
+    if (Date.parse(values.startDate) > Date.parse(values.endDate)) {
+      notification.open({
+        message: 'Ops!',
+        description: 'Data de Início não pode estar depois da Data de Fim'
+      })
 
-    if (['startDate', 'endDate'].includes(name)) {
-      changedValue = changedValue.replace(/[^\d-]/g, '')
+      return
     }
-
-
-    setFormData({ ...formData, [name]: changedValue })
-  }
-
-  async function handleSubmit(formEvent: React.FormEvent<HTMLFormElement>) {
-    formEvent.preventDefault()
 
     const url = process.env.REACT_APP_API_BASE_URL + '/contracts'
 
-    const response = await fetch(url, {
+    await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
+      body: JSON.stringify(values)
     })
 
-    if (response.status === 201) {
-      setFormData(initialFormDataState)
-      window.alert('Prestador cadastrado com sucesso')
-    }
+    form.resetFields()
 
-    if (response.status === 400) {
-      const data = await response.json()
-      window.alert(data.message)
-    }
+    notification.open({
+      message: 'Uhul!',
+      description: 'Contrato cadastrado com sucesso'
+    })
+  }
+
+  const handleFinishFailed = () => {
+    notification.open({
+      message: 'Ops!',
+      description: 'Parece que tem alguns campos necessitando da sua atenção'
+    })
   }
 
   return (
     <>
-      <h2>Cadastro de Contrato</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Prestador de Serviço</label>
-          <select name="serviceIndustryId" value={formData.serviceIndustryId} onChange={handleChange} required>
-            <option> </option>
-            {serviceIndustries.map((serviceIndustry, i) => (
-              <option key={`${i}${serviceIndustry.id}`} value={serviceIndustry.id}>
-                {serviceIndustry.register}: {serviceIndustry.name}
-              </option>
-            ))}
-          </select>
-        </div>
+      <Typography.Title level={2}>Cadastro de Contrato</Typography.Title>
+      <Card>
+        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} form={form} onFinish={handleFinish} onFinishFailed={handleFinishFailed}>
+          <Form.Item label="Prestador de Serviço" name="serviceIndustryId" rules={[{ validator: new Validator().isRequired().build }]}>
+            <Select placeholder="">
+              {serviceIndustries.map((si, i) => (
+                <Select.Option key={`serviceIndustry-${i}-${si.id}`} value={si.id}>
+                  {si.register}: {si.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
 
-        <div>
-          <label>Data de Início</label>
-          <input type="text" name="startDate" value={formData.startDate} onChange={handleChange} minLength={10} maxLength={10} required />
-          <small>Exemplo de formato aceito: 2020-12-23 (ANO - MÊS COM ZERO - DIA COM ZERO)</small>
-        </div>
+          <Form.Item label="Data de Início" name="startDate" rules={[{ validator: new Validator().isRequired().build }]}>
+            <DatePicker />
+          </Form.Item>
 
-        <div>
-          <label>Data de Fim</label>
-          <input type="text" name="endDate" value={formData.endDate} onChange={handleChange} minLength={10} maxLength={10} required />
-          <small>Exemplo de formato aceito: 2020-12-23 (ANO - MÊS COM ZERO - DIA COM ZERO)</small>
-        </div>
+          <Form.Item label="Data de Fim" name="endDate" rules={[{ validator: new Validator().isRequired().build }]}>
+            <DatePicker />
+          </Form.Item>
 
-        <button type="submit">Submeter</button>
-      </form>
+          <Form.Item wrapperCol={{ offset: 4, span: 20 }}>
+            <Button type="primary" htmlType="submit">Submeter</Button>
+          </Form.Item>
+        </Form>
+      </Card>
     </>
   )
 }
