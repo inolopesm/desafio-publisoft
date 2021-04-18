@@ -76,6 +76,16 @@ export default class Validator {
     return this
   }
 
+  inArray(values: unknown[], bypassEmptyArray = false): Validator {
+    this.validators.push(value => {
+      if (values.length === 0 && bypassEmptyArray) return
+      if (values.includes(value)) return
+      throw new Error('Este campo não tem um valor dentro da lista de opções')
+    })
+
+    return this
+  }
+
   build = async (_: any, value: string): Promise<void> => {
     try {
       this.validators.forEach(validator => validator(value))

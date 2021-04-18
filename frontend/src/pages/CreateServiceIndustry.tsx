@@ -1,5 +1,5 @@
-import { Form, Input, Select, Card, Typography, Button, notification } from 'antd'
-import { ChangeEvent } from 'react'
+import { AutoComplete, Form, Input, Select, Card, Typography, Button, notification } from 'antd'
+import { ChangeEvent, useState } from 'react'
 import Validator from '../utils/Validator'
 
 interface Address {
@@ -11,8 +11,11 @@ interface Address {
   complement: string
 }
 
+const mapCity = (city: string) => ({ value: city })
+
 export default function CreateServiceIndustry() {
   const [form] = Form.useForm()
+  const [cities, setCities] = useState<string[]>([])
 
   const handleFinish = async (values: Record<string, string>) => {
     const url = process.env.REACT_APP_API_BASE_URL + '/serviceIndustries'
@@ -40,12 +43,18 @@ export default function CreateServiceIndustry() {
 
   const handleZipCodeChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target
-
     if (/\d{8}/.test(value) === false) return
     const response = await fetch(process.env.REACT_APP_API_BASE_URL + `/addresses/${value}`)
     if (response.status === 404) return
     const data: Address = await response.json()
     form.setFieldsValue(data)
+  }
+
+  const handleStateChange = async (value: string | undefined) => {
+    if (value === undefined && value === '') return
+    const response = await fetch(process.env.REACT_APP_API_BASE_URL + `/states/${value}/cities`)
+    const data: string[] = await response.json()
+    setCities(data)
   }
 
   return (
@@ -77,7 +86,7 @@ export default function CreateServiceIndustry() {
           </Form.Item>
 
           <Form.Item label="UF" name="state" rules={[{ validator: new Validator().isRequired().build }]}>
-            <Select placeholder="PB? PE? SP?">
+            <Select placeholder="PB? PE? SP?" onChange={handleStateChange}>
               {
                 ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
                 .map((state, i) => <Select.Option key={`state-${i}`} value={state}>{state}</Select.Option>)
@@ -85,8 +94,8 @@ export default function CreateServiceIndustry() {
             </Select>
           </Form.Item>
 
-          <Form.Item label="Cidade" name="city" rules={[{ validator: new Validator().isRequired().maxLength(255).build }]}>
-            <Input placeholder="João Pessoa? Recife? São Paulo?" />
+          <Form.Item label="Cidade" name="city" rules={[{ validator: new Validator().isRequired().maxLength(255).inArray(cities, true).build }]}>
+            <AutoComplete options={cities.map(mapCity)} placeholder="João Pessoa? Recife? São Paulo?" />
           </Form.Item>
 
           <Form.Item label="Bairro" name="neighborhood" rules={[{ validator: new Validator().isRequired().maxLength(255).build }]}>
