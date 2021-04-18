@@ -12,7 +12,7 @@ function App() {
     <Layout style={{ minHeight: '100vh' }}>
       <Router>
         <Header />
-        <Layout.Content>
+        <Layout.Content style={{ padding: 16 }}>
           <Switch>
             <Route path="/" exact>
               <Redirect to="/dashboard" />
