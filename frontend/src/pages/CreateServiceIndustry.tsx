@@ -1,5 +1,15 @@
 import { Form, Input, Select, Card, Typography, Button, notification } from 'antd'
+import { ChangeEvent } from 'react'
 import Validator from '../utils/Validator'
+
+interface Address {
+  zipCode: string
+  state: string
+  city: string
+  neighborhood: string
+  street: string
+  complement: string
+}
 
 export default function CreateServiceIndustry() {
   const [form] = Form.useForm()
@@ -28,6 +38,16 @@ export default function CreateServiceIndustry() {
     })
   }
 
+  const handleZipCodeChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
+
+    if (/\d{8}/.test(value) === false) return
+    const response = await fetch(process.env.REACT_APP_API_BASE_URL + `/addresses/${value}`)
+    if (response.status === 404) return
+    const data: Address = await response.json()
+    form.setFieldsValue(data)
+  }
+
   return (
     <>
       <Typography.Title level={2}>Cadastro de Prestador</Typography.Title>
@@ -53,7 +73,7 @@ export default function CreateServiceIndustry() {
           </Form.Item>
 
           <Form.Item label="CEP" name="zipCode" rules={[{ validator: new Validator().isRequired().onlyLength(8).build }]}>
-            <Input placeholder="01001000 (apenas números)" />
+            <Input placeholder="01001000 (apenas números)" onChange={handleZipCodeChange} />
           </Form.Item>
 
           <Form.Item label="UF" name="state" rules={[{ validator: new Validator().isRequired().build }]}>
