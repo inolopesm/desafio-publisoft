@@ -5,10 +5,11 @@ export interface ServiceIndustry {
   name: string
   email: string
   zipCode: string
+  state: string
+  city: string
+  neighborhood: string
+  street: string
   number: string
   complement: string
-  neighborhood: string
-  city: string
-  state: string
   deletedAt?: Date
 }
