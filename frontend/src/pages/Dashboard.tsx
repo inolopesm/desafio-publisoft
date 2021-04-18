@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { differenceInDays } from 'date-fns'
-import { Typography, Card, Row, Col, Table } from 'antd'
+import { Typography, Card, Row, Col, Table, Statistic } from 'antd'
 
 interface Contract {
   id: number
@@ -89,55 +89,55 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <div style={{ padding: 16 }}>
+    <>
       <Typography.Title level={2}>Painel Visual</Typography.Title>
 
       <Typography.Title level={3}>Contratos</Typography.Title>
 
-      <Row gutter={16} justify="space-between">
-        <Col>
-          <Card size="small" style={{ minWidth: 160 }}>
-            <Typography.Title>{expiresIn?.expired}</Typography.Title>
-            <Typography.Title level={5}>Vencidos</Typography.Title>
+      <Row gutter={16} justify="space-between" style={{ marginBottom: 16 }}>
+        <Col span={8}>
+          <Card size="small">
+            <Statistic title="Vencidos" value={expiresIn?.expired} />
           </Card>
         </Col>
-        <Col>
-          <Card size="small" style={{ minWidth: 160 }}>
-            <Typography.Title>{expiresIn?.today}</Typography.Title>
-            <Typography.Title level={5}>Vencem Hoje</Typography.Title>
+        <Col span={8}>
+          <Card size="small">
+            <Statistic title="Vencem Hoje" value={expiresIn?.today} />
           </Card>
         </Col>
-        <Col>
-          <Card size="small" style={{ minWidth: 160 }}>
-            <Typography.Title>{expiresIn?.sevenDays}</Typography.Title>
-            <Typography.Title level={5}>Vencem em 7 Dias</Typography.Title>
-          </Card>
-        </Col>
-        <Col>
-          <Card size="small" style={{ minWidth: 160 }}>
-            <Typography.Title>{expiresIn?.fifteenDays}</Typography.Title>
-            <Typography.Title level={5}>Vencem em 15 Dias</Typography.Title>
-          </Card>
-        </Col>
-        <Col>
-          <Card size="small" style={{ minWidth: 160 }}>
-            <Typography.Title>{expiresIn?.thirtyDays}</Typography.Title>
-            <Typography.Title level={5}>Vencem em 30 Dias</Typography.Title>
+        <Col span={8}>
+          <Card size="small">
+            <Statistic title="Vencem em 7 Dias" value={expiresIn?.sevenDays} />
           </Card>
         </Col>
       </Row>
-
-      <div style={{ padding: 16 }} />
+      <Row gutter={16} justify="space-between" style={{ marginBottom: 16 }}>
+        <Col span={8}>
+          <Card size="small">
+            <Statistic title="Vencem em 15 Dias" value={expiresIn?.fifteenDays} />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card size="small">
+            <Statistic title="Vencem em 30 Dias" value={expiresIn?.thirtyDays} />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card size="small">
+            <Statistic title="Total" value={contracts.length} />
+          </Card>
+        </Col>
+      </Row>
 
       <Card size="small">
         <Table dataSource={contracts}>
           <Table.Column title="#" dataIndex="key" />
           <Table.Column title="Prestador de Serviço" dataIndex="serviceIndustry" />
-          <Table.Column title="Data de Início" dataIndex="startDate" render={(value) => { console.log(typeof value, value); return value; }} />
+          <Table.Column title="Data de Início" dataIndex="startDate" />
           <Table.Column title="Data de Fim" dataIndex="endDate" />
           <Table.Column title="Dias Restantes" dataIndex="daysLeft" />
         </Table>
       </Card>
-    </div>
+    </>
   )
 }
